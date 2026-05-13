@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -139,6 +139,37 @@ public class PersonPageTests
                 out double val)
             && Math.Abs(val - expectedSalary) <= 0.001;
         });
+    }
+
+    [Test]
+    public void Person_SaladyIncrease_WithInvalidPercentage_ShouldShowValidationErrors()
+    {
+        // Arrange
+        driver.Navigate().GoToUrl(BaseURL);
+        driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+        wait.Until(d =>
+        {
+            var el = d.FindElement(By.CssSelector("[data-test='SalaryIncreasePercentageInput']"));
+            el.Clear();
+            el.SendKeys("-11");
+            return true;
+        });
+
+        // Act
+        wait.Until(ExpectedConditions.ElementToBeClickable(
+            By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']"))).Click();
+        
+        // Assert - ValidationMessage az oldal tetejen
+        var validationSummary = wait.Until(ExpectedConditions.ElementExists(By.CssSelector("li.validation-message")));
+        validationSummary.Text.Should().NotBeNullOrEmpty();
+
+        // Assert - ValidationMessage a mezo alatt
+        var validationMessage = wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.validation-message")));
+        validationMessage.Text.Should().NotBeNullOrEmpty();
+
     }
     private bool IsElementPresent(By by)
     {
