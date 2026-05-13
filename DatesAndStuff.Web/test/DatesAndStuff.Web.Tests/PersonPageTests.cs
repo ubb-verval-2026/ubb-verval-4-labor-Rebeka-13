@@ -101,6 +101,7 @@ public class PersonPageTests
     [TestCase(5, 5250)]
     [TestCase(0, 5000)]
     [TestCase(-5, 4750)]
+    [TestCase(-10, 4500)]
     public void Person_SalaryIncrease_ShouldIncrease(double percentage, double expectedSalary)
     {
         // Arrange
